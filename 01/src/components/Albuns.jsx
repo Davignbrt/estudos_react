@@ -1,11 +1,10 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 
 export default function AlbunsUserID() {
-  const [userId, setUserId] = useState(1); // usado no fetch
+  const [userId, setUserId] = useState(1); 
   const [albuns, setAlbuns] = useState([]);
-  const inputRef = useRef(); // referência ao input
+  const [inputValue, setInputValue] = useState(""); 
 
-  // faz a requisição sempre que userId mudar
   useEffect(() => {
     fetch("https://jsonplaceholder.typicode.com/albums")
       .then((res) => res.json())
@@ -16,9 +15,8 @@ export default function AlbunsUserID() {
       .catch((err) => console.error("Erro ao buscar álbuns:", err));
   }, [userId]);
 
-  // só atualiza o userId quando clicar no botão
   const buscarAlbuns = () => {
-    const valor = Number(inputRef.current.value);
+    const valor = Number(inputValue);
     if (valor >= 1 && valor <= 10) {
       setUserId(valor);
     } else {
@@ -31,10 +29,11 @@ export default function AlbunsUserID() {
       <h2>Álbuns por User ID</h2>
       <input
         type="number"
-        ref={inputRef}
-        placeholder="Digite um userId (1 a 10)"
         min="1"
         max="10"
+        placeholder="Digite um userId (1 a 10)"
+        value={inputValue}
+        onInput={(e) => setInputValue(e.target.value)} 
       />
       <button onClick={buscarAlbuns}>Buscar Álbuns</button>
 
