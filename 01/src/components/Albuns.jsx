@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect, useRef } from "react";
 
-export default function AlbunsPorUsuario() {
-  const [userId, setUserId] = useState(1);
+export default function AlbunsUserID() {
+  const [userId, setUserId] = useState(1); // usado no fetch
   const [albuns, setAlbuns] = useState([]);
-  const [recarregar, setRecarregar] = useState(false); // usado para forçar reload
+  const inputRef = useRef(); // referência ao input
 
+  // faz a requisição sempre que userId mudar
   useEffect(() => {
     fetch("https://jsonplaceholder.typicode.com/albums")
       .then((res) => res.json())
@@ -13,36 +14,34 @@ export default function AlbunsPorUsuario() {
         setAlbuns(filtrados);
       })
       .catch((err) => console.error("Erro ao buscar álbuns:", err));
-  }, [userId, recarregar]);
+  }, [userId]);
 
-  function handleInputChange(e) {
-    const valor = Number(e.target.value);
+  // só atualiza o userId quando clicar no botão
+  const buscarAlbuns = () => {
+    const valor = Number(inputRef.current.value);
     if (valor >= 1 && valor <= 10) {
       setUserId(valor);
+    } else {
+      alert("Digite um número entre 1 e 10.");
     }
-  }
-
-  function atualizar() {
-    setRecarregar(!recarregar); // troca o valor para forçar o useEffect
-  }
+  };
 
   return (
     <div>
-      <h2>Álbuns do Usuário</h2>
+      <h2>Álbuns por User ID</h2>
       <input
         type="number"
+        ref={inputRef}
+        placeholder="Digite um userId (1 a 10)"
         min="1"
         max="10"
-        value={userId}
-        onChange={handleInputChange}
-        placeholder="Digite um userId (1 a 10)"
       />
-      <button onClick={atualizar}>Atualizar</button>
+      <button onClick={buscarAlbuns}>Buscar Álbuns</button>
 
       <ul>
         {albuns.map((album) => (
           <li key={album.id}>
-            <strong>ID:</strong> {album.id} - <strong>Título:</strong> {album.title}
+            <strong>{album.title}</strong> (ID: {album.id})
           </li>
         ))}
       </ul>
